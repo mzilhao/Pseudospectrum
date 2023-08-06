@@ -1,8 +1,10 @@
+module AdS
+
+using LinearAlgebra
+using ..Pseudospectrum: cheb, AbstractOperator
 
 @inline r_of_x(x) = tan(pi * x / 2)
-
 @inline V_of_r(r, ll::Int) = (r^2 + 1) * (2 + ll*(ll+1) / r^2)
-
 @inline function V_of_x(x, ll::Int)
     rr = r_of_x(x)
     V_of_r(rr, ll)
@@ -45,3 +47,5 @@ function AdS4_sph(T::Type, N::Int, ll::Int)
 end
 
 AdS4_sph(N::Int, ll::Int) = AdS4_sph(Float64, N, ll)
+
+end

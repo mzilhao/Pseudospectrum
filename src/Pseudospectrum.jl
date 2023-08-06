@@ -4,10 +4,12 @@ using LinearAlgebra
 
 abstract type AbstractOperator end
 
-include("utils.jl")
-include("AdS.jl")
-
 export AbstractOperator
+
+include("utils.jl")
+
+include("AdS.jl")
+using .AdS: AdS4_sph
 export AdS4_sph
 
 end
