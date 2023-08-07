@@ -37,6 +37,8 @@ function cheb(T::Type, N::Integer)
 end
 cheb(N::Integer) = cheb(Float64, N)
 
+Tn(n::Int, x) = cos.(n .* acos.(x))
+
 
 """
     clencurt([T=Float64,] N)
@@ -84,3 +86,32 @@ function clencurt(T::Type, N::Integer)
     w
 end
 clencurt(N::Integer) = clencurt(Float64, N)
+
+
+"""
+    interp_matrix([T=Float64,] M, N)
+
+Interpolation matrix between two Chebyshev-Lobatto grids of sizes M+1 and N+1.
+Given an interpolant polynomial with degree N, this matrix maps it to one with
+degree M.
+"""
+function interp_matrix(T::Type, M::Int, N::Int)
+    x1, = cheb(T,M)
+    x2, = cheb(T,N)
+
+    II = zeros(T, M+1, N+1)
+
+    for i1 in 0:M
+        for i2 in 0:N
+            (i2 == 0 || i2 == N) ? α = 2 : α = 1
+            s = T(1 + (-1)^i1 * (-1)^i2)
+            for j in 1:N-1
+                s += 2 * Tn(j, x2[i2+1]) * Tn(j, x1[i1+1])
+            end
+            II[i1+1, i2+1] = s / (N * α)
+        end
+    end
+
+    II
+end
+interp_matrix(M::Int, N::Int) = interp_matrix(Float64, M, N)

@@ -1,3 +1,4 @@
+using LinearAlgebra
 
 @testset "cheb:" begin
     x, D = PS.cheb(2)
@@ -52,4 +53,70 @@ end
 
     int = w' * f
     @test int ≈ 2.0
+end
+
+@testset "Interpolation:" begin
+    # for rectangular cases (equal grids), the interpolation matrix should
+    # reduce to the identity matrix.
+    II = PS.interp_matrix(5,5)
+    @test II ≈ Matrix(I, 6, 6)
+
+    II = PS.interp_matrix(32,32)
+    @test II ≈ Matrix(I, 33, 33)
+
+
+    # upsample, from a grid with size 5+1 to one with size 7+1
+    N = 5
+    x, = PS.cheb(N)
+    # "old" vector
+    fN = 1 .- x.^2 .+ x.^3
+
+    # new grid
+    M = 7
+    xnew, = PS.cheb(M)
+
+    # interpolation matrix
+    II = PS.interp_matrix(M, N)
+
+    # new vector
+    fM = II * fN
+    @test fM ≈ 1 .- xnew.^2 .+ xnew.^3
+
+
+    # downsample, from a grid with size 12+1 to one with size 5+1
+    N = 12
+    x, = PS.cheb(N)
+    # "old" vector
+    fN = x .- x.^4 .+ 42
+
+    # new grid
+    M = 5
+    xnew, = PS.cheb(M)
+
+    # interpolation matrix
+    II = PS.interp_matrix(M, N)
+
+    # new vector
+    fM = II * fN
+    @test fM ≈ xnew .- xnew.^4 .+ 42
+
+
+    # more examples
+
+    N = 24
+    x, = PS.cheb(N)
+    # "old" vector
+    fN = sin.(2*pi .* x) .+ 0.1 * cos.(pi .* x)
+
+    # new grid
+    M = 32
+    xnew, = PS.cheb(M)
+
+    # interpolation matrix
+    II = PS.interp_matrix(M, N)
+
+    # new vector
+    fM = II * fN
+    @test fM ≈ sin.(2*pi .* xnew) .+ 0.1 * cos.(pi .* xnew)
+
 end
