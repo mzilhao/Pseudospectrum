@@ -12,9 +12,9 @@ differentiation matrices.
 """
 function cheb(xmin::T, xmax::T, N::Integer) where {T<:Real}
     x, D, D2 = cheb(N)
-    x = 0.5 * (xmax + xmin .+ (xmax - xmin) * x)
-    D  ./= 0.5 * (xmax - xmin)
-    D2 ./= 0.25 * (xmax - xmin)^2
+    x = (xmax + xmin .+ (xmax - xmin) * x) / 2
+    D  ./= (xmax - xmin) / 2
+    D2 ./= (xmax - xmin)^2 / 4
     x, D, D2
 end
 
@@ -23,16 +23,15 @@ end
 
 "When omitting grid limits, default to [-1,1] interval"
 function cheb(N::Integer)
-    @assert(N > 1, "number of points should be greater than 1...")
-    M = N - 1
-    x = -cos.(pi*(0:M)/M)
+    @assert(N > 0)
+    x = -cos.(pi*(0:N)/N)
 
-    c  = [2; ones(M-1, 1); 2] .* (-1).^(0:M)
-    X  = repeat(x, 1, N)
+    c  = [2; ones(N-1, 1); 2] .* (-1).^(0:N)
+    X  = repeat(x, 1, N+1)
     dX = X - X'
 
-    D = (c * (1 ./ c)') ./ (dX + Matrix(I, N, N))  # off-diagonal entries
-    D = D - diagm(0 => sum(D', dims=1)[:])         # diagonal entries
+    D = (c * (1 ./ c)') ./ (dX + Matrix(I, N+1, N+1))  # off-diagonal entries
+    D = D - diagm(0 => sum(D', dims=1)[:])             # diagonal entries
 
     x, D, D*D
 end
