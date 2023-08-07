@@ -43,7 +43,17 @@ cheb(N::Integer) = cheb(Float64, N)
 
 Weights for the Clenshaw-Curtis quadrature for a Chebyshev-Lobatto grid. Taken
 from Trefethen (2000), "Spectral Methods in MatLab".
+
+# Arguments
+* `xmin :: AbstractFloat`: rightmost grid point
+* `xmax :: AbstractFloat`: leftmost grid point
+* `N    :: Integer`: total number of grid points
 """
+function clencurt(xmin::T, xmax::T, N::Integer) where {T<:AbstractFloat}
+    w = clencurt(T, N)
+    w * (xmax - xmin) / 2
+end
+
 function clencurt(T::Type, N::Integer)
     theta = T(pi) * (N:-1:0)/N
 
