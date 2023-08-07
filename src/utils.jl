@@ -35,5 +35,42 @@ function cheb(T::Type, N::Integer)
 
     x, D, D*D
 end
-
 cheb(N::Integer) = cheb(Float64, N)
+
+
+"""
+    clencurt([T=Float64,] N)
+
+Weights for the Clenshaw-Curtis quadrature for a Chebyshev-Lobatto grid. Taken
+from Trefethen (2000), "Spectral Methods in MatLab".
+"""
+function clencurt(T::Type, N::Integer)
+    theta = T(pi) * (N:-1:0)/N
+
+    w = zeros(T, N+1)
+
+    if N % 2 == 0
+        w[1] = w[N+1] = T(1) / (N^2-1)
+        for i in 2:N
+            s = zero(T)
+            for k in 1:N/2-1
+                s += 2 * cos(2*k*theta[i]) / (4*k^2 - 1)
+            end
+            s += cos(N*theta[i]) / (N^2 - 1)
+            w[i] = 1 - s
+        end
+    else
+        w[1] = w[N+1] = T(1) / N^2
+        for i in 2:N
+            s = zero(T)
+            for k in 1:(N-1)/2
+                s += 2 * cos(2*k*theta[i]) / (4*k^2 - 1)
+            end
+            w[i] = 1 - s
+        end
+    end
+    w[2:N] *= 2/N
+
+    w
+end
+clencurt(N::Integer) = clencurt(Float64, N)
