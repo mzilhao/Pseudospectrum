@@ -118,5 +118,25 @@ end
     # new vector
     fM = II * fN
     @test fM ≈ sin.(2*pi .* xnew) .+ 0.1 * cos.(pi .* xnew)
+end
 
+@testset "Interpolate and integrate:" begin
+    N = 5
+    M = 2*N
+
+    # grid with N+1 points
+    x, = PS.cheb(0.0, 1.0, N)
+
+    # interpolation matrix for the (M+1)-point grid
+    II = PS.interp_matrix(M,N)
+
+    # integration weights in the (M+1)-point grid
+    w = PS.clencurt(0.0, 1.0, M)
+
+    # functions to integrate
+    f = 1 .- x.^2 .+ x.^3
+    g = 2 .* x.^4 .- 0.5
+
+    int = f' * II' * Diagonal(w) * II * g
+    @test int ≈ -79/840
 end
