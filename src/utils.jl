@@ -21,7 +21,11 @@ end
 
 # taken from Trefethen (2000), "Spectral Methods in MatLab"
 
-"When omitting grid limits, default to [-1,1] interval"
+"""
+    cheb([T=Float64,] N)
+
+When omitting grid limits, default to the [-1,1] interval
+"""
 function cheb(T::Type, N::Integer)
     @assert(N > 0)
     x = -cos.(T(pi)*(0:N)/N)
@@ -41,7 +45,7 @@ Tn(n::Int, x) = cos.(n .* acos.(x))
 
 
 """
-    clencurt([T=Float64,] N)
+    clencurt(xmin, xmax, N)
 
 Weights for the Clenshaw-Curtis quadrature for a Chebyshev-Lobatto grid. Taken
 from Trefethen (2000), "Spectral Methods in MatLab".
@@ -56,6 +60,11 @@ function clencurt(xmin::T, xmax::T, N::Integer) where {T<:AbstractFloat}
     w * (xmax - xmin) / 2
 end
 
+"""
+    clencurt([T=Float64,] N)
+
+When omitting grid limits, default to the [-1,1] interval
+"""
 function clencurt(T::Type, N::Integer)
     theta = T(pi) * (N:-1:0)/N
 
