@@ -48,4 +48,48 @@ end
 
 AdS4_sph(N::Int, ll::Int) = AdS4_sph(Float64, N, ll)
 
+
+# TODO: mudar ll ou II
+function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ll::Int)
+    M = 2*N
+
+    xN, D, _ = cheb(T(0), T(1), N)
+    xM, _    = cheb(T(0), T(1), M)
+
+    zero_mat = zeros(Int8, N+1, N+1)
+
+    # interpolation matrix for the (M+1)-point grid
+    II = interp_matrix(M,N)
+
+    # integration weights in the (M+1)-point grid
+    w = clencurt(T(0), T(1), M)
+
+    CM1 = Diagonal(w)
+    CM2 = 4/T(pi)^2 * Diagonal(w)
+
+    CMV = V_of_x.(xM, ll) .* Diagonal(w)
+    # remove singular points
+    CMV[1,:]   .= 0
+    CMV[end,:] .= 0
+
+    CN1 = II' * CM1 * II
+    CN2 = II' * CM2 * II
+    CNV = II' * CMV * II
+
+    GE1 = T(pi)/4 .* CN1
+    GE2 = T(pi)/4 .* (CNV .+ D' * CN2 * D)
+
+    #= build 2(N+1) matrix
+
+     ( GE1 | 0   )
+     ( 0   | GE2 )
+
+    =#
+    GE = [[GE1 zero_mat];
+          [zero_mat GE2]]
+
+    GE
+end
+
+
 end
