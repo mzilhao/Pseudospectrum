@@ -1,7 +1,7 @@
 module AdS
 
 using LinearAlgebra
-using ..Pseudospectrum: cheb, AbstractOperator
+using ..Pseudospectrum
 
 @inline r_of_x(x) = tan(pi * x / 2)
 @inline V_of_r(r, ll::Int) = (r^2 + 1) * (2 + ll*(ll+1) / r^2)
