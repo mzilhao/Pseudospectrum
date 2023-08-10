@@ -10,21 +10,22 @@ using ..Pseudospectrum
     V_of_r(rr, ℓ)
 end
 
-function build_operator_AdS4_sph(x::AbstractVector, D::AbstractMatrix,
-                                 D2_::AbstractMatrix, ℓ::Int)
-    N  = length(x) - 2
-    Id = Matrix(I, N, N)
-    zero_mat = zeros(Int8, N, N)
+function build_operator_AdS4_sph(T::Type, N::Int, ℓ::Int)
+    x, D, D2_ = cheb(T(0), T(1), N)
+    M = N - 1
+
+    Id = Matrix(I, M, M)
+    zero_mat = zeros(Int8, M, M)
 
     # by sampling only the points in x[2:end-1], we're removing the points x = 0
-    # and x = 1. that's also why we're considering N = length(x) - 2 above.
-
+    # and x = 1. that's also why we're considering M = N - 1 above (remember
+    # that length(x) = N+1).
     V_Id = V_of_x.(x[2:end-1], ℓ) .* Id
     D2 = D2_[2:end-1, 2:end-1]
 
     C = 4 / pi^2 * D2 - V_Id
 
-    #= build 2N matrix
+    #= build 2M matrix
 
      ( 0  |  4/π² ∂_xx - V Id )
      ( Id |  0                )
@@ -40,8 +41,7 @@ struct AdS4_sph{S} <: AbstractOperator
 end
 
 function AdS4_sph(T::Type, N::Int, ℓ::Int)
-    x, D, D2 = cheb(T(0), T(1), N)
-    L  = build_operator_AdS4_sph(x, D, D2, ℓ)
+    L  = build_operator_AdS4_sph(T, N, ℓ)
 
     AdS4_sph(L)
 end
