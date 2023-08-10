@@ -9,8 +9,6 @@ using LinearAlgebra
     F  = eigen(Op.L; sortby = x -> abs(real(x)))
     omega  = F.values
 
-    @test all(abs.(imag(ω)) .< 1e-13)
-
     # let's compare the N/2 first values, as the error increases for
     # higher-frequency ones
     Nmax = Int(floor(N/2))
@@ -18,6 +16,7 @@ using LinearAlgebra
     idx = real(ω) .> 0
     Reω = real(ω[idx])
 
+    @test all(abs.(imag(ω)) .< 1e-13)
     @test all(Reω .≈ [2*n + 3 + ℓ for n in 0:length(Reω)-1])
 
 
@@ -27,8 +26,6 @@ using LinearAlgebra
     F  = eigen(Op.L; sortby = x -> abs(real(x)))
     omega  = F.values
 
-    @test all(abs.(imag(ω)) .< 1e-13)
-
     # let's compare the N/2 first values, as the error increases for
     # higher-frequency ones
     Nmax = Int(floor(N/2))
@@ -36,6 +33,7 @@ using LinearAlgebra
     idx = real(ω) .> 0
     Reω = real(ω[idx])
 
+    @test all(abs.(imag(ω)) .< 1e-13)
     @test all(Reω .≈ [2*n + 3 + ℓ for n in 0:length(Reω)-1])
 
 
@@ -45,7 +43,6 @@ using LinearAlgebra
     F  = eigen(Op.L; sortby = x -> abs(real(x)))
     omega  = F.values
 
-    @test all(abs.(imag(ω)) .< 1e-13)
 
     # let's compare the N/2 first values, as the error increases for
     # higher-frequency ones
@@ -54,5 +51,6 @@ using LinearAlgebra
     idx = real(ω) .> 0
     Reω = real(ω[idx])
 
+    @test all(abs.(imag(ω)) .< 1e-13)
     @test all(Reω .≈ [2*n + 3 + ℓ for n in 0:length(Reω)-1])
 end
