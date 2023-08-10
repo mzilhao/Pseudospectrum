@@ -36,14 +36,31 @@ function build_operator_AdS4_sph(T::Type, N::Int, ℓ::Int)
     im .* L
 end
 
-struct AdS4_sph{S} <: AbstractOperator
-    L :: S
+struct AdS4_sph{S1,S2,S3} <: AbstractOperator
+    L :: S1
+    G :: S2
+    A :: S3
 end
 
 function AdS4_sph(T::Type, N::Int, ℓ::Int)
     L  = build_operator_AdS4_sph(T, N, ℓ)
+    G_ = build_Gram_matrix_AdS4_sph(T, N, ℓ)
 
-    AdS4_sph(L)
+    #=
+    G should be Hermitian by construction (TODO: add tests for this!), but due
+    to round-off errors it won't be exactly. so force it to be thus, as
+    mentioned in LinearAlgebra/src/cholesky.jl:361 (or, equivalently, the
+    documentation for the cholesky method:
+
+      If you have a matrix A that is slightly non-Hermitian due to roundoff
+      errors in its construction, wrap it in Hermitian(A) before passing it to
+      cholesky in order to treat it as perfectly Hermitian.
+    =#
+    G = Hermitian(G_)
+    F = cholesky(G)
+    A = F.U * L * inv(F.U)
+
+    AdS4_sph(L,G,A)
 end
 
 AdS4_sph(N::Int, ℓ::Int) = AdS4_sph(Float64, N, ℓ)
