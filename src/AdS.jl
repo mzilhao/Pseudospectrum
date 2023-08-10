@@ -25,7 +25,7 @@ function build_operator_AdS4_sph(T::Type, N::Int, ℓ::Int)
 
     C = 4 / pi^2 * D2 - V_Id
 
-    #= build 2M matrix
+    #= build 2M x 2M matrix
 
      ( 0  |  4/π² ∂_xx - V Id )
      ( Id |  0                )
@@ -55,7 +55,7 @@ function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ℓ::Int)
     xN, D, _ = cheb(T(0), T(1), N)
     xM, _    = cheb(T(0), T(1), M)
 
-    zero_mat = zeros(Int8, N+1, N+1)
+    zero_mat = zeros(Int8, N-1, N-1)
 
     # interpolation matrix for the (M+1)-point grid
     II = interp_matrix(M,N)
@@ -67,7 +67,7 @@ function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ℓ::Int)
     CM2 = 4/T(pi)^2 * Diagonal(w)
 
     CMV = V_of_x.(xM, ℓ) .* Diagonal(w)
-    # remove singular points
+    # remove singular points, which add to zero anyway
     CMV[1,:]   .= 0
     CMV[end,:] .= 0
 
@@ -75,10 +75,14 @@ function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ℓ::Int)
     CN2 = II' * CM2 * II
     CNV = II' * CMV * II
 
-    GE1 = T(pi)/4 .* CN1
-    GE2 = T(pi)/4 .* (CNV .+ D' * CN2 * D)
+    GE1_ = T(pi)/4 .* CN1
+    GE2_ = T(pi)/4 .* (CNV .+ D' * CN2 * D)
 
-    #= build 2(N+1) matrix
+    # removing the points x = 0 and x = 1, since these add to zero
+    GE1 = GE1_[2:end-1, 2:end-1]
+    GE2 = GE2_[2:end-1, 2:end-1]
+
+    #= build 2(N-1) x 2(N-1) matrix
 
      ( GE1 | 0   )
      ( 0   | GE2 )
