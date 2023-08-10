@@ -4,14 +4,14 @@ using LinearAlgebra
 using ..Pseudospectrum
 
 @inline r_of_x(x) = tan(pi * x / 2)
-@inline V_of_r(r, ll::Int) = (r^2 + 1) * (2 + ll*(ll+1) / r^2)
-@inline function V_of_x(x, ll::Int)
+@inline V_of_r(r, ℓ::Int) = (r^2 + 1) * (2 + ℓ*(ℓ+1) / r^2)
+@inline function V_of_x(x, ℓ::Int)
     rr = r_of_x(x)
-    V_of_r(rr, ll)
+    V_of_r(rr, ℓ)
 end
 
 function build_operator_AdS4_sph(x::AbstractVector, D::AbstractMatrix,
-                                 D2_::AbstractMatrix, ll::Int)
+                                 D2_::AbstractMatrix, ℓ::Int)
     N  = length(x) - 2
     Id = Matrix(I, N, N)
     zero_mat = zeros(Int8, N, N)
@@ -19,7 +19,7 @@ function build_operator_AdS4_sph(x::AbstractVector, D::AbstractMatrix,
     # by sampling only the points in x[2:end-1], we're removing the points x = 0
     # and x = 1. that's also why we're considering N = length(x) - 2 above.
 
-    V_Id = V_of_x.(x[2:end-1], ll) .* Id
+    V_Id = V_of_x.(x[2:end-1], ℓ) .* Id
     D2 = D2_[2:end-1, 2:end-1]
 
     C = 4 / pi^2 * D2 - V_Id
@@ -39,18 +39,17 @@ struct AdS4_sph{S} <: AbstractOperator
     L :: S
 end
 
-function AdS4_sph(T::Type, N::Int, ll::Int)
+function AdS4_sph(T::Type, N::Int, ℓ::Int)
     x, D, D2 = cheb(T(0), T(1), N)
-    L  = build_operator_AdS4_sph(x, D, D2, ll)
+    L  = build_operator_AdS4_sph(x, D, D2, ℓ)
 
     AdS4_sph(L)
 end
 
-AdS4_sph(N::Int, ll::Int) = AdS4_sph(Float64, N, ll)
+AdS4_sph(N::Int, ℓ::Int) = AdS4_sph(Float64, N, ℓ)
 
 
-# TODO: mudar ll ou II
-function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ll::Int)
+function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ℓ::Int)
     M = 2*N
 
     xN, D, _ = cheb(T(0), T(1), N)
@@ -67,7 +66,7 @@ function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ll::Int)
     CM1 = Diagonal(w)
     CM2 = 4/T(pi)^2 * Diagonal(w)
 
-    CMV = V_of_x.(xM, ll) .* Diagonal(w)
+    CMV = V_of_x.(xM, ℓ) .* Diagonal(w)
     # remove singular points
     CMV[1,:]   .= 0
     CMV[end,:] .= 0
