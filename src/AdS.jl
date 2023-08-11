@@ -36,6 +36,54 @@ function build_operator_AdS4_sph(T::Type, N::Int, ℓ::Int)
     im .* L
 end
 
+function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ℓ::Int)
+    M = 2*N
+
+    xN, D, _ = cheb(T(0), T(1), N)
+    xM, _    = cheb(T(0), T(1), M)
+
+    zero_mat = zeros(Int8, N-1, N-1)
+
+    # interpolation matrix for the (M+1)-point grid
+    II = interp_matrix(M,N)
+
+    # integration weights in the (M+1)-point grid
+    w = clencurt(T(0), T(1), M)
+
+    CM1 = Diagonal(w)
+    CM2 = 4/T(pi)^2 * Diagonal(w)
+
+    CMV = V_of_x.(xM, ℓ) .* Diagonal(w)
+    # make the singular points zero, since they add to zero anyway due to the
+    # boundary conditions
+    CMV[1,:]   .= 0
+    CMV[end,:] .= 0
+
+    CN1 = II' * CM1 * II
+    CN2 = II' * CM2 * II
+    CNV = II' * CMV * II
+
+    GE1_ = T(pi)/4 .* CN1
+    GE2_ = T(pi)/4 .* (CNV .+ D' * CN2 * D)
+
+    # remove the rows and columns multiplying with points x = 0 and x = 1,
+    # since these add to zero
+    GE1 = GE1_[2:end-1, 2:end-1]
+    GE2 = GE2_[2:end-1, 2:end-1]
+
+    #= build 2(N-1) x 2(N-1) matrix
+
+     ( GE1 | 0   )
+     ( 0   | GE2 )
+
+    =#
+    GE = [[GE1 zero_mat];
+          [zero_mat GE2]]
+
+    GE
+end
+
+
 struct AdS4_sph{S1,S2,S3} <: AbstractOperator
     L :: S1
     G :: S2
@@ -62,54 +110,6 @@ function AdS4_sph(T::Type, N::Int, ℓ::Int)
 
     AdS4_sph(L,G,A)
 end
-
 AdS4_sph(N::Int, ℓ::Int) = AdS4_sph(Float64, N, ℓ)
-
-
-function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ℓ::Int)
-    M = 2*N
-
-    xN, D, _ = cheb(T(0), T(1), N)
-    xM, _    = cheb(T(0), T(1), M)
-
-    zero_mat = zeros(Int8, N-1, N-1)
-
-    # interpolation matrix for the (M+1)-point grid
-    II = interp_matrix(M,N)
-
-    # integration weights in the (M+1)-point grid
-    w = clencurt(T(0), T(1), M)
-
-    CM1 = Diagonal(w)
-    CM2 = 4/T(pi)^2 * Diagonal(w)
-
-    CMV = V_of_x.(xM, ℓ) .* Diagonal(w)
-    # remove singular points, which add to zero anyway
-    CMV[1,:]   .= 0
-    CMV[end,:] .= 0
-
-    CN1 = II' * CM1 * II
-    CN2 = II' * CM2 * II
-    CNV = II' * CMV * II
-
-    GE1_ = T(pi)/4 .* CN1
-    GE2_ = T(pi)/4 .* (CNV .+ D' * CN2 * D)
-
-    # removing the points x = 0 and x = 1, since these add to zero
-    GE1 = GE1_[2:end-1, 2:end-1]
-    GE2 = GE2_[2:end-1, 2:end-1]
-
-    #= build 2(N-1) x 2(N-1) matrix
-
-     ( GE1 | 0   )
-     ( 0   | GE2 )
-
-    =#
-    GE = [[GE1 zero_mat];
-          [zero_mat GE2]]
-
-    GE
-end
-
 
 end
