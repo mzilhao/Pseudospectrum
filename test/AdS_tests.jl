@@ -54,3 +54,25 @@ using LinearAlgebra
     @test all(abs.(imag(ω)) .< 1e-13)
     @test all(Reω .≈ [2*n + 3 + ℓ for n in 0:length(Reω)-1])
 end
+
+@testset "test if Gram matrix Hermitian:" begin
+    N = 12
+
+    ℓ = 0
+    G = PS.AdS.build_Gram_matrix_AdS4_sph(Float64, N, ℓ)
+    @test G ≈ G'
+
+    ℓ = 1
+    G = PS.AdS.build_Gram_matrix_AdS4_sph(Float64, N, ℓ)
+    @test G ≈ G'
+
+    ℓ = 2
+    G = PS.AdS.build_Gram_matrix_AdS4_sph(Float64, N, ℓ)
+    @test G ≈ G'
+
+    ℓ = 8
+    G = PS.AdS.build_Gram_matrix_AdS4_sph(Float64, N, ℓ)
+    @test G ≈ G'
+
+end
+
