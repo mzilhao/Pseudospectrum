@@ -76,3 +76,37 @@ end
 
 end
 
+@testset "AdS pseudospectrum test:" begin
+    N = 64
+
+    ℓ = 0
+    Op = PS.AdS4_sph(N, ℓ)
+
+    # actual eigenvalues
+    x = [2*n + 3 + ℓ for n in 0:10]
+
+    sigmin = [basic_svd(xi, 0, Op.A) for xi in x]
+    @test all(sigmin .< 1e-12)
+
+
+    ℓ = 1
+    Op = PS.AdS4_sph(N, ℓ)
+
+    # actual eigenvalues
+    x = [2*n + 3 + ℓ for n in 0:10]
+
+    sigmin = [basic_svd(xi, 0, Op.A) for xi in x]
+    @show sigmin
+    @test all(sigmin .< 1e-11)
+
+
+    ℓ = 8
+    Op = PS.AdS4_sph(N, ℓ)
+
+    # actual eigenvalues
+    x = [2*n + 3 + ℓ for n in 0:10]
+
+    sigmin = [basic_svd(xi, 0, Op.A) for xi in x]
+    @test all(sigmin .< 1e-11)
+
+end
