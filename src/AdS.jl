@@ -98,7 +98,7 @@ function AdS4_sph(T::Type, N::Int, ℓ::Int)
     G should be Hermitian by construction, but due to round-off errors it won't
     be exactly. so force it to be thus, as mentioned in
     LinearAlgebra/src/cholesky.jl:361 (or, equivalently, the documentation for
-    the cholesky method:
+    the cholesky method):
 
       If you have a matrix A that is slightly non-Hermitian due to roundoff
       errors in its construction, wrap it in Hermitian(A) before passing it to
