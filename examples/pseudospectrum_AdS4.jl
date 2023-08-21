@@ -2,6 +2,8 @@ using Pseudospectrum
 using LinearAlgebra
 
 using Plots
+using LaTeXStrings
+
 
 ℓ = 2
 N = 64
@@ -53,8 +55,19 @@ Reω = real(ω)
 Imω = imag(ω)
 
 
-plotlyjs()
+#plotlyjs()
+#pyplot()
 
-contourf(x, y, sigmin', color=:plasma, aspect_ratio=:equal, levels=24)
+gr()
 
-scatter!(Reω, Imω, shape=:x, color="red", markersize=5)
+
+
+contourf(x, y, sigmin', color=:plasma, aspect_ratio=:equal, levels=12,
+         title=L"AdS $\ell=2$")
+
+scatter!(Reω, Imω, shape=:x, color="red", markersize=3, label="Normal Modes")
+
+xlabel!(L"$\Re(\omega)$")
+ylabel!(L"$\Im(\omega)$")
+
+savefig("AdS4_PS.pdf")
