@@ -11,6 +11,8 @@ function build_operator_AdS4_sph(T::Type, N::Int, ℓ::Int)
     Id = Matrix(I, M, M)
     zero_mat = zeros(Int8, M, M)
 
+    ## TODO: the procedure below cannot accommodate the case ℓ=0
+
     # by sampling only the points in x[2:end-1], we're removing the points x = 0
     # and x = 1. that's also why we're considering M = N - 1 above (remember
     # that length(x) = N+1).
@@ -56,6 +58,8 @@ function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ℓ::Int)
     GE1_ = T(pi)/4 .* CNV
     GE2_ = T(pi)/4 .* CN1
 
+    ## TODO: the procedure below cannot accommodate the case ℓ=0
+
     # remove the rows and columns multiplying with points x = 0 and x = 1,
     # since these add to zero
     GE1 = GE1_[2:end-1, 2:end-1]
@@ -82,6 +86,8 @@ struct AdS4_sph_IEF{S1,S2,S3,S4}
 end
 
 function AdS4_sph_IEF(T::Type, N::Int, ℓ::Int)
+    @assert ℓ>=0
+    @assert ℓ != 0 "Case ℓ=0 is not yet correctly implemented"
     L  = build_operator_AdS4_sph(T, N, ℓ)
     G_ = build_Gram_matrix_AdS4_sph(T, N, ℓ)
 
