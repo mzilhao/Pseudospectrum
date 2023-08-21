@@ -27,11 +27,11 @@ end
     basic_svd!(sigmin, x, y, A [, B=I] )
 """
 function basic_svd!(sigmin, x::AbstractArray, y::AbstractArray, A::AbstractMatrix, B=I)
-    @assert size(sigmin) == length(x), length(y)
+    @assert size(sigmin) == (length(x), length(y))
 
     @inbounds for i in eachindex(x)
         @inbounds for j in eachindex(y)
-            sigmin[i,j] = basic_svd(x[i], y[i], A, B)
+            sigmin[i,j] = basic_svd(x[i], y[j], A, B)
         end
     end
 
