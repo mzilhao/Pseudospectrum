@@ -2,9 +2,6 @@ module Pseudospectrum
 
 using LinearAlgebra
 
-abstract type AbstractOperator end
-export AbstractOperator
-
 include("utils.jl")
 export cheb, clencurt, interp_matrix
 

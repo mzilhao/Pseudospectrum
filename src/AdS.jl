@@ -84,7 +84,7 @@ function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ℓ::Int)
 end
 
 
-struct AdS4_sph{S1,S2,S3} <: AbstractOperator
+struct AdS4_sph{S1,S2,S3}
     L :: S1
     G :: S2
     A :: S3
