@@ -23,7 +23,7 @@ function build_operator_AdS4_sph(T::Type, N::Int, ℓ::Int)
     V_Id = V_of_x.(x[2:end-1], ℓ) .* Id
     D2 = D2_[2:end-1, 2:end-1]
 
-    C = 4 / pi^2 * D2 - V_Id
+    C = 4 / T(pi)^2 * D2 - V_Id
 
     #= build 2M x 2M matrix
 
