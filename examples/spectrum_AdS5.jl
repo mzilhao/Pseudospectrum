@@ -26,7 +26,7 @@ T = Float64
 
 z, D, D2 = cheb(zero(T), one(T), N)
 L1, L2 = build_operators(z, D, D2, ksq)
-F = eigen(L1, L2; sortby = x -> -imag(x))
+F = eigen(L1, L2; sortby = x -> real(x)^2 + imag(x)^2)
 
 
 # follow the rule of thumb by Boyd and consider only the N/2 first eigenmodes.
