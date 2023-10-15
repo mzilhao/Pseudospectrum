@@ -63,7 +63,7 @@ include("compute.jl")
 export basic_svd, basic_svd!
 
 
-include("AdS.jl")
+include("AdS4.jl")
 export AdS4_sph
 
 include("AdS5_IEF.jl")
