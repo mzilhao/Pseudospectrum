@@ -5,8 +5,8 @@ using Plots
 using LaTeXStrings
 
 
-ℓ = 2
-N = 64
+ℓ = 4
+N = 32
 
 Op = AdS4_sph(N, ℓ)
 
@@ -25,24 +25,7 @@ ymax =  T(5)
 x = range(xmin, xmax, length=Nx)
 y = range(ymin, ymax, length=Ny)
 
-
-sigmin = zeros(T,Nx,Ny)
-it = 0
-for i in eachindex(x)
-    for j in eachindex(y)
-        global it += 1
-        λ = x[i] + im * y[j]
-        if it % 1000 == 0
-            @show λ
-        end
-        M = λ * I - Op.A
-        svd_M = svd(M)
-        # the singular values in S are sorted in descending order, so the last
-        # element is the smaller one, which is what we want
-        sigmin[i,j] = svd_M.S[end]
-    end
-end
-
+sigmin = basic_svd(x, y, Op.A)
 
 # spectra
 F = eigen(Op.L; sortby = x -> abs(real(x)))
@@ -55,10 +38,10 @@ Reω = real(ω)
 Imω = imag(ω)
 
 
-#plotlyjs()
+plotlyjs()
 #pyplot()
 
-gr()
+#gr()
 
 
 
@@ -70,4 +53,4 @@ scatter!(Reω, Imω, shape=:x, color="red", markersize=3, label="Normal Modes")
 xlabel!(L"$\Re(\omega)$")
 ylabel!(L"$\Im(\omega)$")
 
-savefig("AdS4_PS.pdf")
+#savefig("AdS4_PS.pdf")
