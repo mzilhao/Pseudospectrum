@@ -1,9 +1,11 @@
-module AdS5_IEF
 
-using LinearAlgebra
-using ..Pseudospectrum
+struct AdS5_planar_IEF{T<:Number} <: Model
+    k2 :: T
+end
 
-function build_operators(T::Type, N::Int, k2::Number)
+function build_operators(T::Type, N::Int, model::AdS5_planar_IEF)
+    k2 = model.k2
+
     z, D, D2 = cheb(T(0), T(1), N)
 
     N  = length(z)
@@ -20,7 +22,9 @@ function build_operators(T::Type, N::Int, k2::Number)
     im * iL1, L2
 end
 
-function build_Gram_matrix(T::Type, N::Int, k2::Number)
+function build_Gram_matrix(T::Type, N::Int, model::AdS5_planar_IEF)
+    k2 = model.k2
+
     M = 2*N
 
     zN, D, _ = cheb(T(0), T(1), N)
@@ -44,36 +48,4 @@ function build_Gram_matrix(T::Type, N::Int, k2::Number)
     GE = (CN1 .+ D' * CN2 * D .+ CN3 * D .+ D' * CN3) / 2
 
     GE
-end
-
-
-struct AdS5_planar_IEF{S1,S2,S3}
-    A :: S1
-    B :: S2
-    G :: S3
-end
-
-function AdS5_planar_IEF(T::Type, N::Int, k2::Number)
-    L1, L2  = build_operators(T, N, k2)
-    G_ = build_Gram_matrix(T, N, k2)
-
-    #=
-    G should be Hermitian by construction, but due to round-off errors it won't
-    be exactly. so force it to be thus, as mentioned in
-    LinearAlgebra/src/cholesky.jl:361 (or, equivalently, the documentation for
-    the cholesky method):
-
-      If you have a matrix A that is slightly non-Hermitian due to roundoff
-      errors in its construction, wrap it in Hermitian(A) before passing it to
-      cholesky in order to treat it as perfectly Hermitian.
-    =#
-    G = Hermitian(G_)
-    F = cholesky(G)
-    A = F.U * L1 * inv(F.U)
-    B = F.U * L2 * inv(F.U)
-
-    AdS5_planar_IEF(A,B,G)
-end
-AdS5_planar_IEF(N::Int, k2::Number) = AdS5_planar_IEF(Float64, N, k2)
-
 end
