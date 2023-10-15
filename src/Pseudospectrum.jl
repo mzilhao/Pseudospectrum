@@ -66,7 +66,7 @@ export basic_svd, basic_svd!
 include("AdS4.jl")
 export AdS4_sph
 
-include("AdS5_IEF.jl")
+include("AdS5BH.jl")
 export AdS5BH_planar
 
 end
