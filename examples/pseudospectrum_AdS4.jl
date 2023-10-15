@@ -8,7 +8,9 @@ using LaTeXStrings
 ℓ = 4
 N = 32
 
-Op = AdS4_sph(N, ℓ)
+model = AdS4_sph(ℓ)
+
+Op = Operators(N, model)
 
 
 Nx = 201
@@ -28,7 +30,7 @@ y = range(ymin, ymax, length=Ny)
 sigmin = basic_svd(x, y, Op.A)
 
 # spectra
-F = eigen(Op.L; sortby = x -> abs(real(x)))
+F = eigen(Op.A; sortby = x -> abs(real(x)))
 omega = F.values
 
 #Nmax = Int(floor(N/2))

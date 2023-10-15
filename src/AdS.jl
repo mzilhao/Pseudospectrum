@@ -1,7 +1,4 @@
-module AdS
-
-using LinearAlgebra
-using ..Pseudospectrum
+module AdS4
 
 @inline r_of_x(x) = tan(pi * x / 2)
 @inline V_of_r(r, ℓ::Int) = (r^2 + 1) * (2 + ℓ*(ℓ+1) / r^2)
@@ -10,7 +7,17 @@ using ..Pseudospectrum
     V_of_r(rr, ℓ)
 end
 
-function build_operator_AdS4_sph(T::Type, N::Int, ℓ::Int)
+end
+
+struct AdS4_sph <: Model
+    ℓ :: Int
+end
+
+
+function build_operators(T::Type, N::Int, model::AdS4_sph)
+    ℓ = model.ℓ
+    V = AdS4.V_of_x
+
     x, D, D2_ = cheb(T(0), T(1), N)
     M = N - 1
 
@@ -20,7 +27,7 @@ function build_operator_AdS4_sph(T::Type, N::Int, ℓ::Int)
     # by sampling only the points in x[2:end-1], we're removing the points x = 0
     # and x = 1. that's also why we're considering M = N - 1 above (remember
     # that length(x) = N+1).
-    V_Id = V_of_x.(x[2:end-1], ℓ) .* Id
+    V_Id = V.(x[2:end-1], ℓ) .* Id
     D2 = D2_[2:end-1, 2:end-1]
 
     C = 4 / T(pi)^2 * D2 - V_Id
@@ -33,10 +40,13 @@ function build_operator_AdS4_sph(T::Type, N::Int, ℓ::Int)
     =#
     L = [[zero_mat C]; [Id zero_mat]]
 
-    im .* L
+    im .* L, I
 end
 
-function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ℓ::Int)
+function build_Gram_matrix(T::Type, N::Int, model::AdS4_sph)
+    ℓ = model.ℓ
+    V = AdS4.V_of_x
+
     M = 2*N
 
     xN, D, _ = cheb(T(0), T(1), N)
@@ -53,7 +63,7 @@ function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ℓ::Int)
     CM1 = Diagonal(w)
     CM2 = 4/T(pi)^2 * Diagonal(w)
 
-    CMV = V_of_x.(xM, ℓ) .* Diagonal(w)
+    CMV = V.(xM, ℓ) .* Diagonal(w)
     # make the singular points zero, since they add to zero anyway due to the
     # boundary conditions
     CMV[1,:]   .= 0
@@ -81,35 +91,4 @@ function build_Gram_matrix_AdS4_sph(T::Type, N::Int, ℓ::Int)
           [zero_mat GE2]]
 
     GE
-end
-
-
-struct AdS4_sph{S1,S2,S3}
-    L :: S1
-    G :: S2
-    A :: S3
-end
-
-function AdS4_sph(T::Type, N::Int, ℓ::Int)
-    L  = build_operator_AdS4_sph(T, N, ℓ)
-    G_ = build_Gram_matrix_AdS4_sph(T, N, ℓ)
-
-    #=
-    G should be Hermitian by construction, but due to round-off errors it won't
-    be exactly. so force it to be thus, as mentioned in
-    LinearAlgebra/src/cholesky.jl:361 (or, equivalently, the documentation for
-    the cholesky method):
-
-      If you have a matrix A that is slightly non-Hermitian due to roundoff
-      errors in its construction, wrap it in Hermitian(A) before passing it to
-      cholesky in order to treat it as perfectly Hermitian.
-    =#
-    G = Hermitian(G_)
-    F = cholesky(G)
-    A = F.U * L * inv(F.U)
-
-    AdS4_sph(L,G,A)
-end
-AdS4_sph(N::Int, ℓ::Int) = AdS4_sph(Float64, N, ℓ)
-
 end

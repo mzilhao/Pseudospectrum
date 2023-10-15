@@ -63,13 +63,8 @@ include("compute.jl")
 export basic_svd, basic_svd!
 
 
-# include("AdS.jl")
-# using .AdS: AdS4_sph
-# export AdS4_sph
-
-# include("AdS_IEF.jl")
-# using .AdS_IEF: AdS4_sph_IEF
-# export AdS4_sph_IEF
+include("AdS.jl")
+export AdS4_sph
 
 include("AdS5_IEF.jl")
 export AdS5_planar_IEF
