@@ -1,33 +1,13 @@
 using Pseudospectrum
 using LinearAlgebra
 
-function build_operators(z::AbstractVector, D::AbstractMatrix, D2::AbstractMatrix,
-                         k2::Number)
-    N  = length(z)
-    Id = Matrix(I, N, N)
-
-    z2 = z .* z
-    z4 = z2 .* z2
-    z5 = z .* z4
-
-    L1 = @. -(1 - z4) * z2 * D2 +
-        4*z5 * D +
-        ( z2 * k2 + 3//4 * (1 - z4) + 3 * (1 + z4) ) * Id
-
-    L2 = @. 2 * z2 * im * D
-
-    L1, L2
-end
-
 ksq = 0
 N = 128
 
-T = Float64
+model = AdS5BH_planar(k2)
+Op = Operators(N, model)
 
-z, D, D2 = cheb(zero(T), one(T), N)
-L1, L2 = build_operators(z, D, D2, ksq)
-F = eigen(L1, L2; sortby = x -> real(x)^2 + imag(x)^2)
-
+F = eigen(Op.A, Op.B; sortby = x -> real(x)^2 + imag(x)^2)
 
 # follow the rule of thumb by Boyd and consider only the N/2 first eigenmodes.
 # also, take the conjugate to remove the minus sign in all the imaginary parts
@@ -37,7 +17,7 @@ omega = conj(F.values[1:Nmax])
 
 # using the Schur decomposition:
 
-# F = schur(L1, L2)
+# F = schur(Op.A, Op.B)
 
 # λ = F.α ./ F.β
 # conj!(λ)
