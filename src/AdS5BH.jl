@@ -15,8 +15,7 @@ function build_operators(T::Type, N::Int, model::AdS5BH_planar)
     z3 = z .* z2
     z4 = z2 .* z2
 
-    iL1  = @. z * (1 - z4) * D2 + (5 - 9z4) * D - (k2 * z + 16z3) * Id
-
+    iL1 = @. z * (1 - z4) * D2 + (5 - 9z4) * D - (k2 * z + 16z3) * Id
     L2  = @. 2 * z * D + 5*Id
 
     im * iL1, L2

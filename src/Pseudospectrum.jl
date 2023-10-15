@@ -31,7 +31,7 @@ struct Operators{S1,S2,S3}
 end
 
 function Operators(T::Type, N::Int, model::Model)
-    L1, L2  = build_operators(T, N, model)
+    L1, L2 = build_operators(T, N, model)
     G_ = build_Gram_matrix(T, N, model)
 
     #=
@@ -62,6 +62,8 @@ export cheb, clencurt, interp_matrix
 include("compute.jl")
 export basic_svd, basic_svd!
 
+
+# Models
 
 include("AdS4.jl")
 export AdS4_sph
