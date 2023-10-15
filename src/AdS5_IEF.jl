@@ -1,9 +1,9 @@
 
-struct AdS5_planar_IEF{T<:Number} <: Model
+struct AdS5BH_planar{T<:Number} <: Model
     k2 :: T
 end
 
-function build_operators(T::Type, N::Int, model::AdS5_planar_IEF)
+function build_operators(T::Type, N::Int, model::AdS5BH_planar)
     k2 = model.k2
 
     z, D, D2 = cheb(T(0), T(1), N)
@@ -22,7 +22,7 @@ function build_operators(T::Type, N::Int, model::AdS5_planar_IEF)
     im * iL1, L2
 end
 
-function build_Gram_matrix(T::Type, N::Int, model::AdS5_planar_IEF)
+function build_Gram_matrix(T::Type, N::Int, model::AdS5BH_planar)
     k2 = model.k2
 
     M = 2*N

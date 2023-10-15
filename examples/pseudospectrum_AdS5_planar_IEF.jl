@@ -8,7 +8,7 @@ using LaTeXStrings
 # k2 = 0
 # N  = 48
 
-# Op = AdS5_planar_IEF(N, k2)
+# Op = AdS5BH_planar(N, k2)
 
 
 # Nx = 201
@@ -64,7 +64,7 @@ using LaTeXStrings
 
 k2 = 0
 
-model = AdS5_planar_IEF(k2)
+model = AdS5BH_planar(k2)
 
 
 N  = 48

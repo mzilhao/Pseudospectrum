@@ -67,6 +67,6 @@ include("AdS4.jl")
 export AdS4_sph
 
 include("AdS5_IEF.jl")
-export AdS5_planar_IEF
+export AdS5BH_planar
 
 end
