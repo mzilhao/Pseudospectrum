@@ -62,28 +62,24 @@ end
 
     ℓ = 0
     model = AdS4_sph(ℓ)
-    Op = Operators(N, model)
 
     G = PS.build_Gram_matrix(Float64, N, model)
     @test G ≈ G'
 
     ℓ = 1
     model = AdS4_sph(ℓ)
-    Op = Operators(N, model)
 
     G = PS.build_Gram_matrix(Float64, N, model)
     @test G ≈ G'
 
     ℓ = 2
     model = AdS4_sph(ℓ)
-    Op = Operators(N, model)
 
     G = PS.build_Gram_matrix(Float64, N, model)
     @test G ≈ G'
 
     ℓ = 8
     model = AdS4_sph(ℓ)
-    Op = Operators(N, model)
 
     G = PS.build_Gram_matrix(Float64, N, model)
     @test G ≈ G'
@@ -111,7 +107,6 @@ end
     x = [2*n + 3 + ℓ for n in 0:10]
 
     sigmin = [basic_svd(xi, 0, Op.A) for xi in x]
-    @show sigmin
     @test all(sigmin .< 1e-11)
 
 
