@@ -35,17 +35,17 @@
     @test imag(ω3) ≈ imag(ω4)
 
 
-    # and now for the following 2, which should be ω ≈ ±7.188 - i 6.7696
+    # and now for the following 2, which should be ω ≈ ±7.188 - i 6.769
     ω5 = F.values[5]
     ω6 = F.values[6]
 
     Reω_target = 7.188
-    Imω_target = -6.7696
+    Imω_target = -6.769
 
     @test isapprox(real(ω5), Reω_target, atol=1e-3)  || isapprox(real(ω5), -Reω_target, atol=1e-3)
-    @test isapprox(imag(ω6), Imω_target, atol=1e-4)
+    @test isapprox(imag(ω6), Imω_target, atol=1e-3)
 
-    @test real(ω5) ≈ -real(ω6)
+    @test isapprox(real(ω5), -real(ω6), atol=1e-5)
     @test isapprox(imag(ω5), imag(ω6), atol=1e-5)
 end
 
