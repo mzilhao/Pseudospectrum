@@ -9,10 +9,10 @@ Trefethen, Embree, "Spectra and Pseudospectra - The Behavior of Nonnormal Matric
 @inline function basic_svd(x::Number, y::Number, A::AbstractMatrix, B=I)
     λ = x + im * y
     M = λ * B - A
-    svd_M = svd(M)
+    svd_M = svdvals(M)
     # the singular values in S are sorted in descending order, so the last
     # element is the smaller one, which is what we want
-    svd_M.S[end]
+    svd_M[end]
 end
 
 function basic_svd(x::AbstractArray, y::AbstractArray, A::AbstractMatrix, B=I)
