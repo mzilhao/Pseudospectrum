@@ -124,3 +124,37 @@ function interp_matrix(T::Type, M::Int, N::Int)
     II
 end
 interp_matrix(M::Int, N::Int) = interp_matrix(Float64, M, N)
+
+
+# TODO
+
+function compute_abscissa(epsilons::AbstractMatrix, x::AbstractArray, y::AbstractArray;
+                          reltol=0.01)
+
+    eps_i = minimum(epsilons) + 1.e-6
+    eps_f = maximum(epsilons) * 0.6
+
+    Nx = length(x)
+    Ny = length(y)
+
+    Nstep = Int(floor(sqrt(Nx*Ny)*0.8))
+
+    eps_list = range(eps_i, eps_f, length=Nstep)
+
+    alpha = []
+    for eps0 in eps_list
+        zz = []
+        for i in 1:Nx, j in 1:Ny
+            if abs(epsilons[i,j] - eps0)/eps0 < reltol
+                push!(zz, y[j])
+            end
+        end
+        push!(alpha, maximum(zz, init=-Inf))
+    end
+
+    idx = alpha .!= -Inf
+    xx  = eps_list[idx]
+    yy  = alpha[idx]
+
+    xx, yy
+end
